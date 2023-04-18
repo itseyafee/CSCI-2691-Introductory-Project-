@@ -1,0 +1,214 @@
+-- -----------------------------------------------------
+-- replace db_name with your database name
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- if you want to drop the database before you create
+-- -----------------------------------------------------
+DROP DATABASE IF EXISTS db_name;
+
+-- -----------------------------------------------------
+-- Database `db_name`
+-- -----------------------------------------------------
+CREATE DATABASE IF NOT EXISTS db_name;
+USE db_name;
+
+-- -----------------------------------------------------
+-- Table `role`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `x691`.`role`;
+CREATE TABLE `x691`.`role` (
+	`role_id` INT UNSIGNED NOT NULL AUTO_INCREMENT , 
+	`role_name` VARCHAR(1000) NOT NULL , 
+	PRIMARY KEY (`role_id`), 
+	UNIQUE `role_name_unique` (`role_name`)
+);
+
+
+-- -----------------------------------------------------
+-- Table `account`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `x691`.`account` ;
+CREATE TABLE `x691`.`account` (
+  `account_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(100) NOT NULL,
+  `password` CHAR(100) NOT NULL COMMENT 'depends on what hash method used , the data type could be different',
+  `role_id` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`account_id`),
+  UNIQUE `role_id_idx` (`role_id`),
+  `img` MEDIUMBLOB NULL DEFAULT NULL, 
+  CONSTRAINT `role_id`
+    FOREIGN KEY (`role_id`)
+    REFERENCES `x691`.`role` (`role_id`))
+;
+
+-- -----------------------------------------------------
+-- Table `accountrole`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `x691`.`status` ;
+CREATE TABLE `x691`.`status` (
+	`status_id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+	 `status_name` VARCHAR(100) NOT NULL , 
+	PRIMARY KEY (`status_id`), 
+	UNIQUE `status_name_unique` (`status_name`)) 
+;
+
+
+-- -----------------------------------------------------
+-- Table `project`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `x691`.`project` ;
+CREATE TABLE `x691`.`project` (
+  `project_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `project_name` VARCHAR(100) NOT NULL,
+  `description` MEDIUMTEXT NULL DEFAULT NULL,
+  `status_id` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`project_id`),
+  UNIQUE `fk_status_id_idx` (`status_id`),
+  CONSTRAINT `status_id`
+    FOREIGN KEY (`status_id`)
+    REFERENCES `x691`.`status` (`status_id`))
+;
+
+-- -----------------------------------------------------
+-- Table `projectstatus`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `projectstatus` ;
+CREATE TABLE `projectstatus` (
+	`project_id` INT UNSIGNED NOT NULL UNIQUE,
+  	`status_id` INT UNSIGNED NOT NULL,
+  	PRIMARY KEY (`project_id`, `status_id`),
+  	CONSTRAINT `project_status_project_id`
+    		FOREIGN KEY (`project_id`)
+    		REFERENCES `project` (`id`),
+  	CONSTRAINT `project_status_status_id`
+    		FOREIGN KEY (`status_id`)
+    REFERENCES `status` (`id`)
+);
+
+-- -----------------------------------------------------
+-- Table `file`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `file` ;
+CREATE TABLE `file` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(128) NOT NULL,
+  `filetype` VARCHAR(64) NOT NULL,
+  `file` LONGBLOB  NOT NULL,
+  PRIMARY KEY (`id`));
+
+-- -----------------------------------------------------
+-- Table `projectfile`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `projectfile` ;
+CREATE TABLE `projectfile` (
+  `file_id` INT UNSIGNED NOT NULL UNIQUE,
+  `project_id` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`file_id`, `project_id`),
+  CONSTRAINT `project_file_project_id`
+    FOREIGN KEY (`project_id`)
+    REFERENCES `x691`.`project` (`project_id`))
+;
+
+
+
+-- -----------------------------------------------------
+-- Table `projecthighlight`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `x691`.`projecthighlight` ;
+CREATE TABLE `x691`.`projecthighlight` (
+  `project_id` INT UNSIGNED NOT NULL,
+  `testimonial_name` VARCHAR(1000) NULL DEFAULT NULL,
+  `testimonial_quote` VARCHAR(1000) NULL DEFAULT NULL,
+  `img` MEDIUMBLOB NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `project_highlight_project_id`
+    FOREIGN KEY (`project_id`)
+    REFERENCES `x691`.`project` (`project_id`))
+;
+
+
+-- -----------------------------------------------------
+-- Table `projectownership`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `projectownership` ;
+CREATE TABLE `projectownership` (
+  `account_id` INT UNSIGNED NOT NULL,
+  `project_id` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`account_id`, `project_id`),
+  CONSTRAINT `project_ownership_account_id`
+    FOREIGN KEY (`account_id`)
+    REFERENCES `account` (`id`),
+  CONSTRAINT `project_ownership_project_id`
+    FOREIGN KEY (`project_id`)
+    REFERENCES `x691`.`project` (`project_id`))
+;
+
+-- -----------------------------------------------------
+-- Table `organization`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `organization` ;
+CREATE TABLE `organization` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(300) NOT NULL,
+  PRIMARY KEY (`id`));
+
+-- -----------------------------------------------------
+-- Table `projectorganization`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `projectorganization` ;
+CREATE TABLE `projectorganization` (
+  `organization_id` INT UNSIGNED NOT NULL,
+  `project_id` INT UNSIGNED NOT NULL UNIQUE,
+  PRIMARY KEY (`organization_id`, `project_id`),
+  CONSTRAINT `project_organization_organization_id`
+    FOREIGN KEY (`organization_id`)
+    REFERENCES `organization` (`id`),
+  CONSTRAINT `project_organization_project_id`
+    FOREIGN KEY (`project_id`)
+    REFERENCES `project` (`id`));
+
+-- --------------------------------------------------------
+-- Table structure for table `testimonials`
+--
+
+CREATE TABLE `testimonials` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `Client_Name` varchar(255) DEFAULT NULL,
+  `Paragraph` varchar DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `testimonials`
+--
+
+INSERT INTO `testimonials` (`id`, `created_at`, `updated_at`, `Client_Name`, `Paragraph`) VALUES
+(1, '2023-03-28 17:44:04', '2023-03-28 17:44:04', 'John Doe', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent et nibh aliquet, luctus dolor sed, ultrices metus. Nullam cursus magna non mattis pellentesque. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec '),
+(2, NULL, NULL, 'Jane Doe', 'Suspendisse blandit scelerisque ultricies. Vivamus a lectus libero. Aenean eget risus tellus. Maecenas laoreet velit mauris, vitae condimentum purus pretium nec. Vivamus nisl sapien, aliquam eu auctor et, aliquam ut erat. Aliquam orci diam, tristique ac d'),
+(6, NULL, NULL, 'John Appleseed', 'Ut in posuere orci, nec ultricies leo. Morbi vel tortor tempus, maximus felis quis, dictum magna. Proin in tellus sit amet nunc ultrices dapibus et vel augue. Ut varius leo a lorem auctor, mollis interdum est volutpat. Pellentesque gravida id lacus id tin');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `testimonials`
+--
+ALTER TABLE `testimonials`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `testimonials`
+--
+ALTER TABLE `testimonials`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

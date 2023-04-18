@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.main {
+    background-color: var(--white);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.registeration-header {
+    padding-top: 5rem;
+    margin: 1rem;
+}
+
+.register-container {
+    height: 70%;
+    width: 70%;
+    background-color: white;
+    border-radius: 2rem;
+    display: flex;
+}
+
+.description {
+    border-top-left-radius: 2rem;
+    border-bottom-left-radius: 2rem;
+    padding: 5%;
+    /* background-color: var(--purple); */
+    display: flex;
+    justify-content: center;
+    /* color: white; */
+}
+
+
+.shadow {
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 8px 11px;
+}
